@@ -797,6 +797,22 @@ a:hover {
   margin-top: 4px;
 }
 
+.cv-more-btn {
+  margin-top: 6px;
+  padding: 8px 10px;
+  border-radius: 10px;
+  border: 1px solid var(--border);
+  background: #f7f7f7;
+  color: var(--text);
+  cursor: pointer;
+  font-weight: 600;
+}
+
+.cv-more-btn:hover {
+  background: #ffffff;
+  box-shadow: 0 4px 12px rgba(17, 24, 39, 0.06);
+}
+
 .table {
   width: 100%;
   border-collapse: collapse;

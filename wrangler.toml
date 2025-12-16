@@ -1,0 +1,10 @@
+name = "researcher-site"
+main = "worker.ts"
+compatibility_date = "2024-12-16"
+
+# Serve built assets from dist via Workers Assets binding
+assets = { directory = "./dist", binding = "ASSETS" }
+
+# Uncomment and set your account_id / routes when deploying
+# account_id = "<your-account-id>"
+# routes = ["example.com/*"]

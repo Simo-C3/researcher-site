@@ -181,6 +181,12 @@ export default function CV() {
     'idle' | 'loading' | 'ok' | 'error'
   >('idle')
   const [worksData, setWorksData] = useState<NormalizedWorks | null>(null)
+  const [expand, setExpand] = useState({
+    journal: false,
+    conference: false,
+    preprints: false,
+    others: false,
+  })
 
   useEffect(() => {
     const controller = new AbortController()
@@ -331,10 +337,19 @@ export default function CV() {
     return { slice, hasMore, moreCount }
   }
 
-  const journalLimited = limitList(journalPubs)
-  const confLimited = limitList(confPubs)
-  const preprintLimited = limitList(preprintPubs)
-  const othersLimited = limitList(othersPubs, 4)
+  const viewList = (list: WorkItem[], expanded: boolean, max = MAX_PER_SECTION) => {
+    const limited = limitList(list, max)
+    return {
+      items: expanded ? list : limited.slice,
+      showMore: !expanded && limited.hasMore,
+      moreCount: limited.moreCount,
+    }
+  }
+
+  const journalView = viewList(journalPubs, expand.journal)
+  const confView = viewList(confPubs, expand.conference)
+  const preprintView = viewList(preprintPubs, expand.preprints)
+  const otherView = viewList(othersPubs, expand.others, 4)
 
   return (
     <div className="glass" style={{ padding: 20, display: 'grid', gap: 18 }}>
@@ -471,7 +486,7 @@ export default function CV() {
           <div className="cv-block">
             <div className="cv-title">Journal Papers</div>
             <div className="simple-list">
-              {journalLimited.slice.map((pub) => (
+              {journalView.items.map((pub) => (
                 <div className="simple-item" key={pub.title}>
                   <strong>{pub.title}</strong>
                   <span className="simple-meta">{normalizeVenue(pub)}</span>
@@ -490,17 +505,20 @@ export default function CV() {
                   </div>
                 </div>
               ))}
-              {journalLimited.hasMore && (
-                <div className="cv-more">
-                  and {journalLimited.moreCount} more from ORCID…
-                </div>
+              {journalView.showMore && (
+                <button
+                  className="cv-more-btn"
+                  onClick={() => setExpand((s) => ({ ...s, journal: true }))}
+                >
+                  もっとみる (+{journalView.moreCount})
+                </button>
               )}
             </div>
           </div>
           <div className="cv-block">
             <div className="cv-title">Conference Papers</div>
             <div className="simple-list">
-              {confLimited.slice.map((pub) => (
+              {confView.items.map((pub) => (
                 <div className="simple-item" key={pub.title}>
                   <strong>{pub.title}</strong>
                   <span className="simple-meta">{normalizeVenue(pub)}</span>
@@ -519,17 +537,20 @@ export default function CV() {
                   </div>
                 </div>
               ))}
-              {confLimited.hasMore && (
-                <div className="cv-more">
-                  and {confLimited.moreCount} more from ORCID…
-                </div>
+              {confView.showMore && (
+                <button
+                  className="cv-more-btn"
+                  onClick={() => setExpand((s) => ({ ...s, conference: true }))}
+                >
+                  もっとみる (+{confView.moreCount})
+                </button>
               )}
             </div>
           </div>
           <div className="cv-block">
             <div className="cv-title">Preprints (arXiv)</div>
             <div className="simple-list">
-              {preprintLimited.slice.map((pub) => (
+              {preprintView.items.map((pub) => (
                 <div className="simple-item" key={pub.title}>
                   <strong>{pub.title}</strong>
                   <span className="simple-meta">{normalizeVenue(pub)}</span>
@@ -548,10 +569,13 @@ export default function CV() {
                   </div>
                 </div>
               ))}
-              {preprintLimited.hasMore && (
-                <div className="cv-more">
-                  and {preprintLimited.moreCount} more from ORCID…
-                </div>
+              {preprintView.showMore && (
+                <button
+                  className="cv-more-btn"
+                  onClick={() => setExpand((s) => ({ ...s, preprints: true }))}
+                >
+                  もっとみる (+{preprintView.moreCount})
+                </button>
               )}
             </div>
           </div>
@@ -560,7 +584,7 @@ export default function CV() {
           <div className="cv-block" style={{ marginTop: 12 }}>
             <div className="cv-title">Other Works</div>
             <div className="simple-list">
-              {othersLimited.slice.map((pub) => (
+              {otherView.items.map((pub) => (
                 <div
                   className="simple-item"
                   key={`${pub.title}-${
@@ -584,10 +608,13 @@ export default function CV() {
                   </div>
                 </div>
               ))}
-              {othersLimited.hasMore && (
-                <div className="cv-more">
-                  and {othersLimited.moreCount} more from ORCID…
-                </div>
+              {otherView.showMore && (
+                <button
+                  className="cv-more-btn"
+                  onClick={() => setExpand((s) => ({ ...s, others: true }))}
+                >
+                  もっとみる (+{otherView.moreCount})
+                </button>
               )}
             </div>
           </div>
